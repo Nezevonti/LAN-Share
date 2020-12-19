@@ -21,9 +21,59 @@ namespace LAN_Share
 
         public Client()
         {
-            ExecuteClient();
-            Console.ReadKey();
+            bool Continue = true;
+
+            while (Continue)
+            {
+                //ExecuteClient();
+                ExecuteBroadcast();
+                if(Console.ReadKey().Key == ConsoleKey.E)
+                {
+                    Continue = false;
+                }
+            }
+            
         }
+
+        static String GetMessage()
+        {
+            return Console.ReadLine()+"<EOF>";
+        }
+
+
+        // ExecuteBroadcast() Method
+        static void ExecuteBroadcast()
+        {
+            try
+            {
+                String DiscoveryMsg = "I wanna send you a file. What is your IP?<EOF>";
+                byte[] MsgSent = Encoding.ASCII.GetBytes(DiscoveryMsg);
+
+                IPEndPoint EndPoint = new IPEndPoint(IPAddress.Broadcast, 11111);
+
+                Socket bcSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+                bcSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
+                bcSocket.ReceiveTimeout = 200;
+
+                IPHostEntry hostEntry = Dns.GetHostEntry(Dns.GetHostName());
+                IPAddress hostAddress = hostEntry.AddressList[hostEntry.AddressList.Length - 1];
+                IPEndPoint localEndPoint = new IPEndPoint(hostAddress, 11111);
+                bcSocket.Bind(localEndPoint);
+
+                bcSocket.SendTo(MsgSent, EndPoint);
+
+                Console.WriteLine("Msg Sent");
+
+
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+
 
         // ExecuteClient() Method 
         static void ExecuteClient()
@@ -36,7 +86,7 @@ namespace LAN_Share
                 // for the socket. This example  
                 // uses port 11111 on the local  
                 // computer. 
-                IPHostEntry ipHost = Dns.GetHostEntry("DESKTOP-1GC20RS");
+                IPHostEntry ipHost = Dns.GetHostEntry(IPAddress.Parse(DesktopIP));
                 IPAddress ipAddr = ipHost.AddressList[ipHost.AddressList.Length-1];
                 IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 11111);
 
@@ -58,8 +108,9 @@ namespace LAN_Share
                                   sender.RemoteEndPoint.ToString());
 
                     // Creation of messagge that 
-                    // we will send to Server 
-                    byte[] messageSent = Encoding.ASCII.GetBytes("Test Client<EOF>");
+                    // we will send to Server
+                    String Msg = GetMessage();
+                    byte[] messageSent = Encoding.ASCII.GetBytes(Msg);
                     int byteSent = sender.Send(messageSent);
 
                     // Data buffer 
