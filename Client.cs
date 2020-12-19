@@ -36,7 +36,7 @@ namespace LAN_Share
                 // for the socket. This example  
                 // uses port 11111 on the local  
                 // computer. 
-                IPHostEntry ipHost = Dns.GetHostEntry(IPAddress.Parse(DesktopIP));
+                IPHostEntry ipHost = Dns.GetHostEntry("DESKTOP-1GC20RS");
                 IPAddress ipAddr = ipHost.AddressList[ipHost.AddressList.Length-1];
                 IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 11111);
 
