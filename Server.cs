@@ -21,7 +21,35 @@ namespace LAN_Share
 
         public Server()
         {
-            ExecuteServer();
+            //ExecuteServer();
+            ExcecuteServerBroadcastHandler();
+            Console.ReadKey();
+        }
+
+
+        public static void ExcecuteServerBroadcastHandler()
+        {
+
+            Socket brSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 11111);
+
+            brSocket.Bind(endPoint);
+            EndPoint endPointRemote = (EndPoint)endPoint;
+
+            Console.WriteLine("Waiting for broadcast");
+
+            byte[] brMsg = new byte[1024];
+
+            brSocket.ReceiveFrom(brMsg,ref endPointRemote);
+
+            String BrData = Encoding.ASCII.GetString(brMsg);
+
+            Console.WriteLine(BrData);
+
+            brSocket.Close();
+
+
             Console.ReadKey();
         }
 

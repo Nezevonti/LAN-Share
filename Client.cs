@@ -61,9 +61,16 @@ namespace LAN_Share
                 IPEndPoint localEndPoint = new IPEndPoint(hostAddress, 11111);
                 bcSocket.Bind(localEndPoint);
 
-                bcSocket.SendTo(MsgSent, EndPoint);
+                while (true)
+                {
+                    bcSocket.SendTo(MsgSent, EndPoint);
 
-                Console.WriteLine("Msg Sent");
+                    Console.WriteLine("Msg Sent");
+
+                    System.Threading.Thread.Sleep(1000);
+                }
+
+                
 
 
             }
